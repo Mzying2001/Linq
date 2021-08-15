@@ -135,6 +135,12 @@ public class Linq<T> implements Iterable<T> {
         return new Linq<T>(list);
     }
 
+    public <ComparableType extends Comparable<ComparableType>> Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
+        List<T> list = this.toList();
+        Sort.quickSort(list, iFunc);
+        return new Linq<T>(list);
+    }
+
     public Iterable<T> select() {
         return _iterable;
     }
