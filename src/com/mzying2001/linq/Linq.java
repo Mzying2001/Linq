@@ -126,6 +126,12 @@ public class Linq<T> implements Iterable<T> {
         return new Linq<T>(arr).toList();
     }
 
+    public Linq<T> reverse() {
+        List<T> list = this.toList();
+        Collections.reverse(list);
+        return new Linq<>(list);
+    }
+
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
         List<T> list = new ArrayList<>();
         for (T t : _iterable) {
