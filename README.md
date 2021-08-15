@@ -13,10 +13,11 @@ public class Test {
         //要查询的数组
         Integer[] arr = {54, 32, 63, 25, 67, 12, 43, 74, 234, 563, 112};
 
-        //使用Linq，获取arr中的偶数并将每个数乘3.3
-        for (var item :
-                Linq.from(arr).where(i -> i % 2 == 0).select(i -> i * 3.3)) {
-            //此处item类型是Double
+        //使用Linq，获取arr中的偶数，排序后将每个数乘3.1
+        var temp = Linq.from(arr).where(i -> i % 2 == 0).orderBy(i -> i).select(i -> i * 3.1);
+
+        //输出结果，此处item类型是Double
+        for (var item : temp) {
             System.out.println(item);
         }
 
@@ -25,12 +26,12 @@ public class Test {
 
 /*
     运行结果：
-    178.2
-    105.6
-    39.599999999999994
-    244.2
-    772.1999999999999
-    369.59999999999997
+    37.2
+    99.2
+    167.4
+    229.4
+    347.2
+    725.4
  */
 ```
 
