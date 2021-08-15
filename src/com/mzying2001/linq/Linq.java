@@ -16,11 +16,11 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public static <T> Linq<T> from(Iterable<T> iterable) {
-        return new Linq<T>(iterable);
+        return new Linq<>(iterable);
     }
 
     public static <T> Linq<T> from(T[] arr) {
-        return new Linq<T>(arr);
+        return new Linq<>(arr);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Linq<T> implements Iterable<T> {
 
     public int count() {
         int ret = 0;
-        for (T t : _iterable) {
+        for (T ignored : _iterable) {
             ret++;
         }
         return ret;
@@ -132,13 +132,13 @@ public class Linq<T> implements Iterable<T> {
             if (iFunc.func(t))
                 list.add(t);
         }
-        return new Linq<T>(list);
+        return new Linq<>(list);
     }
 
     public <ComparableType extends Comparable<ComparableType>> Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
         List<T> list = this.toList();
         Sort.quickSort(list, iFunc);
-        return new Linq<T>(list);
+        return new Linq<>(list);
     }
 
     public Iterable<T> select() {
