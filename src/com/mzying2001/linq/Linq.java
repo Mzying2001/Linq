@@ -1,6 +1,6 @@
 package com.mzying2001.linq;
 
-import com.mzying2001.linq.Interfaces.*;
+import com.mzying2001.linq.interfaces.*;
 
 import java.util.*;
 
