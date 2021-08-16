@@ -190,6 +190,44 @@ public class Linq<T> implements Iterable<T> {
         return this.count() == 0;
     }
 
+    public T first() {
+        if (this.count() == 0) {
+            return null;
+        } else {
+            return this._list.get(0);
+        }
+    }
+
+    public T first(IFunc<T, Boolean> iFunc) {
+        for (var item : this) {
+            if (iFunc.func(item))
+                return item;
+        }
+        return null;
+    }
+
+    public T last() {
+        int index = this.count() - 1;
+        if (index == -1) {
+            return null;
+        } else {
+            return this._list.get(index);
+        }
+    }
+
+    public T last(IFunc<T, Boolean> iFunc) {
+        List<T> list = this._list;
+        if (list.size() == 0) {
+            return null;
+        }
+        for (int i = list.size() - 1; i >= 0; i--) {
+            T item = list.get(i);
+            if (iFunc.func(item))
+                return item;
+        }
+        return null;
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
