@@ -1,6 +1,6 @@
 # Linq
 
-简易的Linq
+Java版的Linq
 
 ### 示例
 
