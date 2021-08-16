@@ -11,7 +11,7 @@ public class Test {
     public static void main(String[] args) {
 
         //要查询的数组
-        Integer[] arr = {54, 32, 63, 25, 67, 12, 43, 74, 234, 563, 112};
+        int[] arr = {54, 32, 63, 25, 67, 12, 43, 74, 234, 563, 112};
 
         //使用Linq，获取arr中的偶数，排序后将每个数乘3.1
         var temp = Linq.from(arr).where(i -> i % 2 == 0).orderBy(i -> i).select(i -> i * 3.1);
