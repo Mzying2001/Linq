@@ -90,35 +90,43 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public boolean all(IFunc<T, Boolean> iFunc) {
-        for (var item : this) {
+        return Linq.all(this, iFunc);
+    }
+
+    public static <T> boolean all(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        for (var item : iterable) {
             if (!iFunc.func(item))
                 return false;
         }
         return true;
     }
 
-    public static <T> boolean all(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(iterable).all(iFunc);
-    }
-
     public static <T> boolean all(T[] arr, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(arr).all(iFunc);
+        for (var item : arr) {
+            if (!iFunc.func(item))
+                return false;
+        }
+        return true;
     }
 
     public boolean any(IFunc<T, Boolean> iFunc) {
-        for (var item : this) {
+        return Linq.any(this, iFunc);
+    }
+
+    public static <T> boolean any(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        for (var item : iterable) {
             if (iFunc.func(item))
                 return true;
         }
         return false;
     }
 
-    public static <T> boolean any(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(iterable).any(iFunc);
-    }
-
     public static <T> boolean any(T[] arr, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(arr).any(iFunc);
+        for (var item : arr) {
+            if (iFunc.func(item))
+                return true;
+        }
+        return false;
     }
 
     public boolean contains(T value) {
@@ -126,11 +134,22 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public static <T> boolean contains(Iterable<T> iterable, T value) {
-        return new Linq<T>(iterable).contains(value);
+        if (value == null) {
+            for (var item : iterable) {
+                if (item == null)
+                    return true;
+            }
+        } else {
+            for (var item : iterable) {
+                if (value.equals(item))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public static <T> boolean contains(T[] arr, T value) {
-        return new Linq<T>(arr).contains(value);
+        return Arrays.asList(arr).contains(value);
     }
 
     public int count() {
@@ -138,24 +157,33 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public static <T> int count(Iterable<T> iterable) {
-        return new Linq<T>(iterable).count();
+        int ret = 0;
+        for (var ignored : iterable) {
+            ret++;
+        }
+        return ret;
     }
 
     public int count(IFunc<T, Boolean> iFunc) {
+        return Linq.count(this, iFunc);
+    }
+
+    public static <T> int count(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
         int ret = 0;
-        for (var item : this) {
+        for (var item : iterable) {
             if (iFunc.func(item))
                 ret++;
         }
         return ret;
     }
 
-    public static <T> int count(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(iterable).count(iFunc);
-    }
-
     public static <T> int count(T[] arr, IFunc<T, Boolean> iFunc) {
-        return new Linq<T>(arr).count(iFunc);
+        int ret = 0;
+        for (var item : arr) {
+            if (iFunc.func(item))
+                ret++;
+        }
+        return ret;
     }
 
     public List<T> toList() {
@@ -257,7 +285,8 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
-    public <ComparableType extends Comparable<ComparableType>> Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
+    public <ComparableType extends Comparable<ComparableType>>
+    Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
         Sort.quickSort(this._list, iFunc);
         return this;
     }
