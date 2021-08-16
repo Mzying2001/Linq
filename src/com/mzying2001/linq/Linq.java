@@ -5,14 +5,14 @@ import com.mzying2001.linq.interfaces.*;
 import java.util.*;
 
 public class Linq<T> implements Iterable<T> {
-    private final Iterable<T> _iterable;
+    private List<T> _list;
 
     public Linq(Iterable<T> iterable) {
-        this._iterable = iterable;
+        this._list = Linq.toList(iterable);
     }
 
     public Linq(T[] arr) {
-        this._iterable = Arrays.asList(arr);
+        this._list = Linq.toList(arr);
     }
 
     public static <T> Linq<T> from(Iterable<T> iterable) {
@@ -25,17 +25,17 @@ public class Linq<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return _iterable.iterator();
+        return this._list.iterator();
     }
 
     @Override
     public String toString() {
-        return _iterable.toString();
+        return this._list.toString();
     }
 
     public boolean all(IFunc<T, Boolean> iFunc) {
-        for (T t : _iterable) {
-            if (!iFunc.func(t))
+        for (var item : this) {
+            if (!iFunc.func(item))
                 return false;
         }
         return true;
@@ -50,8 +50,8 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public boolean any(IFunc<T, Boolean> iFunc) {
-        for (T t : _iterable) {
-            if (iFunc.func(t))
+        for (var item : this) {
+            if (iFunc.func(item))
                 return true;
         }
         return false;
@@ -66,11 +66,7 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public boolean contains(T value) {
-        for (T t : _iterable) {
-            if (t.equals(value))
-                return true;
-        }
-        return false;
+        return this._list.contains(value);
     }
 
     public static <T> boolean contains(Iterable<T> iterable, T value) {
@@ -82,11 +78,7 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public int count() {
-        int ret = 0;
-        for (T ignored : _iterable) {
-            ret++;
-        }
-        return ret;
+        return this._list.size();
     }
 
     public static <T> int count(Iterable<T> iterable) {
@@ -95,8 +87,8 @@ public class Linq<T> implements Iterable<T> {
 
     public int count(IFunc<T, Boolean> iFunc) {
         int ret = 0;
-        for (T t : _iterable) {
-            if (iFunc.func(t))
+        for (var item : this) {
+            if (iFunc.func(item))
                 ret++;
         }
         return ret;
@@ -111,58 +103,58 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public List<T> toList() {
-        List<T> list = new ArrayList<>();
-        for (T t : _iterable) {
-            list.add(t);
-        }
+        List<T> list = new ArrayList<>(this._list.size());
+        list.addAll(this._list);
         return list;
     }
 
     public static <T> List<T> toList(Iterable<T> iterable) {
-        return new Linq<T>(iterable).toList();
+        List<T> list = new ArrayList<>();
+        for (var item : iterable) {
+            list.add(item);
+        }
+        return list;
     }
 
     public static <T> List<T> toList(T[] arr) {
-        return new Linq<T>(arr).toList();
+        return Arrays.asList(arr);
     }
 
     public Linq<T> reverse() {
-        List<T> list = this.toList();
-        Collections.reverse(list);
-        return new Linq<>(list);
+        Collections.reverse(this._list);
+        return this;
     }
 
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
-        List<T> list = new ArrayList<>();
-        for (T t : _iterable) {
-            if (iFunc.func(t))
-                list.add(t);
+        List<T> list = new ArrayList<>(this.count());
+        for (var item : this) {
+            if (iFunc.func(item))
+                list.add(item);
         }
-        return new Linq<>(list);
+        this._list = list;
+        return this;
     }
 
     public <ComparableType extends Comparable<ComparableType>> Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
-        List<T> list = this.toList();
-        Sort.quickSort(list, iFunc);
-        return new Linq<>(list);
+        Sort.quickSort(this._list, iFunc);
+        return this;
     }
 
     public <ComparableType extends Comparable<ComparableType>>
     Linq<T> orderByDescending(IFunc<T, ComparableType> iFunc) {
-        List<T> list = this.toList();
-        Sort.quickSort(list, iFunc);
-        Collections.reverse(list);
-        return new Linq<>(list);
+        Sort.quickSort(this._list, iFunc);
+        Collections.reverse(this._list);
+        return this;
     }
 
     public Iterable<T> select() {
-        return _iterable;
+        return this.toList();
     }
 
     public <ReturnType> Iterable<ReturnType> select(IFunc<T, ReturnType> iFunc) {
         List<ReturnType> list = new ArrayList<>();
-        for (T t : _iterable) {
-            list.add(iFunc.func(t));
+        for (var item : this) {
+            list.add(iFunc.func(item));
         }
         return list;
     }
