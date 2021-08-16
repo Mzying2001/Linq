@@ -186,6 +186,10 @@ public class Linq<T> implements Iterable<T> {
         return ret;
     }
 
+    public boolean empty() {
+        return this.count() == 0;
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
