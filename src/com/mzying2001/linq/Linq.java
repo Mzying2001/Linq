@@ -306,6 +306,37 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public Linq<T> except(Iterable<T> iterable) {
+        Set<T> set = new HashSet<>();
+        for (var item : iterable) {
+            set.add(item);
+        }
+        List<T> list = this._list;
+        for (int i = 0; i < list.size(); i++) {
+            if (set.contains(list.get(i)))
+                list.remove(i--);
+        }
+        return this;
+    }
+
+    public Linq<T> except(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
+        List<T> newList = new ArrayList<>(this.count());
+        for (var item : this) {
+            boolean flag = true;
+            for (var ex : iterable) {
+                if (equalityCompare.equals(item, ex)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                newList.add(item);
+            }
+        }
+        this._list = newList;
+        return this;
+    }
+
     public Linq<T> reverse() {
         Collections.reverse(this._list);
         return this;
