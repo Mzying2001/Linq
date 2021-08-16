@@ -1,6 +1,8 @@
 package com.mzying2001.linq;
 
-import com.mzying2001.linq.interfaces.*;
+import com.mzying2001.linq.interfaces.AggregateFunc;
+import com.mzying2001.linq.interfaces.IEqualityCompare;
+import com.mzying2001.linq.interfaces.IFunc;
 
 import java.util.*;
 
