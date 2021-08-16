@@ -274,6 +274,13 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
+    public Linq<T> concat(Iterable<T> iterable) {
+        for (var item : iterable) {
+            this._list.add(item);
+        }
+        return this;
+    }
+
     public Linq<T> distinct() {
         Set<T> set = new HashSet<>(this.count());
         for (var item : this) {
@@ -318,10 +325,7 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        for (var item : iterable) {
-            this._list.add(item);
-        }
-        return this.distinct(equalityCompare);
+        return this.concat(iterable).distinct(equalityCompare);
     }
 
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
