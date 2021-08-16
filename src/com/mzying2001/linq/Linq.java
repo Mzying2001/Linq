@@ -312,6 +312,18 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
+    public T aggregate(AggregateFunc<T> aggregateFunc) {
+        Iterator<T> iterator = this.iterator();
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        T result = iterator.next();
+        while (iterator.hasNext()) {
+            result = aggregateFunc.func(result, iterator.next());
+        }
+        return result;
+    }
+
     public Linq<T> concat(Iterable<T> iterable) {
         for (var item : iterable) {
             this._list.add(item);
