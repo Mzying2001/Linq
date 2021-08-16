@@ -7,8 +7,16 @@ import java.util.*;
 public class Linq<T> implements Iterable<T> {
     private List<T> _list;
 
+    private Linq() {
+    }
+
     public Linq(Iterable<T> iterable) {
         this._list = Linq.toList(iterable);
+    }
+
+    public Linq(List<T> list) {
+        this._list = new ArrayList<>(list.size());
+        this._list.addAll(list);
     }
 
     public Linq(T[] arr) {
@@ -21,6 +29,54 @@ public class Linq<T> implements Iterable<T> {
 
     public static <T> Linq<T> from(T[] arr) {
         return new Linq<>(arr);
+    }
+
+    public static Linq<Boolean> from(boolean[] arr) {
+        Linq<Boolean> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Byte> from(byte[] arr) {
+        Linq<Byte> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Character> from(char[] arr) {
+        Linq<Character> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Short> from(short[] arr) {
+        Linq<Short> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Integer> from(int[] arr) {
+        Linq<Integer> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Long> from(long[] arr) {
+        Linq<Long> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Float> from(float[] arr) {
+        Linq<Float> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
+    }
+
+    public static Linq<Double> from(double[] arr) {
+        Linq<Double> linq = new Linq<>();
+        linq._list = Linq.toList(arr);
+        return linq;
     }
 
     @Override
@@ -117,7 +173,73 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public static <T> List<T> toList(T[] arr) {
-        return Arrays.asList(arr);
+        List<T> list = new ArrayList<>(arr.length);
+        Collections.addAll(list, arr);
+        return list;
+    }
+
+    public static List<Boolean> toList(boolean[] arr) {
+        List<Boolean> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Byte> toList(byte[] arr) {
+        List<Byte> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Character> toList(char[] arr) {
+        List<Character> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Short> toList(short[] arr) {
+        List<Short> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Integer> toList(int[] arr) {
+        List<Integer> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Long> toList(long[] arr) {
+        List<Long> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Float> toList(float[] arr) {
+        List<Float> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static List<Double> toList(double[] arr) {
+        List<Double> list = new ArrayList<>(arr.length);
+        for (var item : arr) {
+            list.add(item);
+        }
+        return list;
     }
 
     public Linq<T> reverse() {
