@@ -304,6 +304,26 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public Linq<T> union(Iterable<T> iterable) {
+        Set<T> set = new HashSet<>();
+        for (var item : this) {
+            set.add(item);
+        }
+        for (var item : iterable) {
+            set.add(item);
+        }
+        this._list.clear();
+        this._list.addAll(set);
+        return this;
+    }
+
+    public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
+        for (var item : iterable) {
+            this._list.add(item);
+        }
+        return this.distinct(equalityCompare);
+    }
+
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
         List<T> list = new ArrayList<>(this.count());
         for (var item : this) {
