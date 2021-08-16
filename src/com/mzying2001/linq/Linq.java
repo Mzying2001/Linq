@@ -315,7 +315,11 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public T aggregate(AggregateFunc<T> aggregateFunc) {
-        Iterator<T> iterator = this.iterator();
+        return Linq.aggregate(this, aggregateFunc);
+    }
+
+    public static <T> T aggregate(Iterable<T> iterable, AggregateFunc<T> aggregateFunc) {
+        Iterator<T> iterator = iterable.iterator();
         if (!iterator.hasNext()) {
             return null;
         }
@@ -326,6 +330,10 @@ public class Linq<T> implements Iterable<T> {
         return result;
     }
 
+    public static <T> T aggregate(T[] arr, AggregateFunc<T> aggregateFunc) {
+        return Linq.aggregate(Arrays.asList(arr), aggregateFunc);
+    }
+
     public Linq<T> concat(Iterable<T> iterable) {
         for (var item : iterable) {
             this._list.add(item);
@@ -333,50 +341,127 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public static <T> List<T> concat(Iterable<T> iterable1, Iterable<T> iterable2) {
+        List<T> list = Linq.toList(iterable1);
+        for (var item : iterable2) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static <T> List<T> concat(List<T> list1, List<T> list2) {
+        List<T> ret = new ArrayList<>(list1.size() + list2.size());
+        ret.addAll(list1);
+        ret.addAll(list2);
+        return ret;
+    }
+
+    public static <T> List<T> concat(T[] arr1, T[] arr2) {
+        return Linq.concat(Arrays.asList(arr1), Arrays.asList(arr2));
+    }
+
     public Linq<T> distinct() {
         Set<T> set = new HashSet<>(this.count());
-        for (var item : this) {
-            set.add(item);
-        }
+        set.addAll(this._list);
         this._list.clear();
         this._list.addAll(set);
         return this;
     }
 
-    public Linq<T> distinct(IEqualityCompare<T> equalityCompare) {
-        List<T> oldList = this._list;
-        List<T> newList = new ArrayList<>(oldList.size());
-        for (int i = 0; i < oldList.size(); i++) {
-            T item = oldList.get(i);
-            for (int j = i + 1; j < oldList.size(); j++) {
-                if (equalityCompare.equals(item, oldList.get(j)))
-                    oldList.remove(j--);
-            }
-            newList.add(item);
-        }
-        this._list = newList;
-        return this;
-    }
-
-    public Linq<T> except(Iterable<T> iterable) {
+    public static <T> List<T> distinct(Iterable<T> iterable) {
         Set<T> set = new HashSet<>();
         for (var item : iterable) {
             set.add(item);
         }
-        List<T> list = this._list;
-        for (int i = 0; i < list.size(); i++) {
-            if (set.contains(list.get(i)))
-                list.remove(i--);
-        }
+        return Linq.toList(set);
+    }
+
+    public static <T> List<T> distinct(List<T> list) {
+        Set<T> set = new HashSet<>(list.size());
+        set.addAll(list);
+        List<T> ret = new ArrayList<>(set.size());
+        ret.addAll(set);
+        return ret;
+    }
+
+    public static <T> List<T> distinct(T[] arr) {
+        return Linq.distinct(Arrays.asList(arr));
+    }
+
+    public Linq<T> distinct(IEqualityCompare<T> equalityCompare) {
+        this._list = Linq.distinct(this._list, equalityCompare);
         return this;
     }
 
+    public static <T> List<T> distinct(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
+        return Linq.distinct(Linq.toList(iterable), equalityCompare);
+    }
+
+    public static <T> List<T> distinct(List<T> list, IEqualityCompare<T> equalityCompare) {
+        Set<Integer> skipIndexes = new HashSet<>(list.size());
+        List<T> newList = new ArrayList<>(list.size());
+        int listSize = list.size();
+        for (int i = 0; i < listSize; i++) {
+            if (skipIndexes.contains(i)) {
+                continue;
+            }
+            T item = list.get(i);
+            for (int j = i + 1; j < listSize; j++) {
+                if (equalityCompare.equals(item, list.get(j))) {
+                    skipIndexes.add(j);
+                }
+            }
+            newList.add(item);
+        }
+        return newList;
+    }
+
+    public static <T> List<T> distinct(T[] arr, IEqualityCompare<T> equalityCompare) {
+        return Linq.distinct(Arrays.asList(arr), equalityCompare);
+    }
+
+    public Linq<T> except(Iterable<T> iterable) {
+        this._list = Linq.except(this._list, iterable);
+        return this;
+    }
+
+    public static <T> List<T> except(Iterable<T> iterable, Iterable<T> ex) {
+        return Linq.except(Linq.toList(iterable), ex);
+    }
+
+    public static <T> List<T> except(List<T> list, Iterable<T> ex) {
+        Set<T> set = new HashSet<>();
+        for (var item : ex) {
+            set.add(item);
+        }
+        List<T> newList = new ArrayList<>(list.size());
+        for (var item : list) {
+            if (!set.contains(item)) {
+                newList.add(item);
+            }
+        }
+        return newList;
+    }
+
+    public static <T> List<T> except(T[] arr, Iterable<T> ex) {
+        return Linq.except(Arrays.asList(arr), ex);
+    }
+
     public Linq<T> except(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        List<T> newList = new ArrayList<>(this.count());
-        for (var item : this) {
+        this._list = Linq.except(this._list, iterable, equalityCompare);
+        return this;
+    }
+
+    public static <T> List<T> except(Iterable<T> iterable, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
+        return Linq.except(Linq.toList(iterable), ex, equalityCompare);
+    }
+
+    public static <T> List<T> except(List<T> list, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
+        List<T> newList = new ArrayList<>(list.size());
+        for (var item : list) {
             boolean flag = true;
-            for (var ex : iterable) {
-                if (equalityCompare.equals(item, ex)) {
+            for (var exItem : ex) {
+                if (equalityCompare.equals(item, exItem)) {
                     flag = false;
                     break;
                 }
@@ -385,13 +470,28 @@ public class Linq<T> implements Iterable<T> {
                 newList.add(item);
             }
         }
-        this._list = newList;
-        return this;
+        return newList;
+    }
+
+    public static <T> List<T> except(T[] arr, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
+        return Linq.except(Arrays.asList(arr), ex, equalityCompare);
     }
 
     public Linq<T> reverse() {
         Collections.reverse(this._list);
         return this;
+    }
+
+    public static <T> List<T> reverse(Iterable<T> iterable) {
+        Stack<T> stack = new Stack<>();
+        for (var item : iterable) {
+            stack.push(item);
+        }
+        List<T> list = new ArrayList<>(stack.size());
+        while (!stack.empty()) {
+            list.add(stack.pop());
+        }
+        return list;
     }
 
     public Linq<T> union(Iterable<T> iterable) {
@@ -407,8 +507,26 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2) {
+        Set<T> set = new HashSet<>();
+        for (var item : iterable1) {
+            set.add(item);
+        }
+        for (var item : iterable2) {
+            set.add(item);
+        }
+        List<T> list = new ArrayList<>(set.size());
+        list.addAll(set);
+        return list;
+    }
+
     public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
         return this.concat(iterable).distinct(equalityCompare);
+    }
+
+    public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityCompare<T> equalityCompare) {
+        List<T> list = Linq.concat(iterable1, iterable2);
+        return Linq.distinct(list, equalityCompare);
     }
 
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
