@@ -3,6 +3,7 @@ package com.mzying2001.linq;
 import com.mzying2001.linq.interfaces.AggregateFunc;
 import com.mzying2001.linq.interfaces.IEqualityCompare;
 import com.mzying2001.linq.interfaces.IFunc;
+import com.sun.source.tree.LiteralTree;
 
 import java.util.*;
 
@@ -614,6 +615,38 @@ public class Linq<T> implements Iterable<T> {
     public static <SourceType, ReturnType>
     List<ReturnType> select(SourceType[] arr, IFunc<SourceType, ReturnType> iFunc) {
         return Linq.select(Arrays.asList(arr), iFunc);
+    }
+
+    public Linq<T> skip(int count) {
+        this._list = Linq.skip(this._list, count);
+        return this;
+    }
+
+    public static <T> List<T> skip(Iterable<T> iterable, int count) {
+        Iterator<T> iterator = iterable.iterator();
+        while (iterator.hasNext() && count-- > 0) {
+            iterator.next();
+        }
+        List<T> ret = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ret.add(iterator.next());
+        }
+        return ret;
+    }
+
+    public static <T> List<T> skip(List<T> list, int count) {
+        int size = list.size();
+        List<T> newList = new ArrayList<>(size);
+        if (count < size) {
+            for (int i = count; i < size; i++) {
+                newList.add(list.get(i));
+            }
+        }
+        return newList;
+    }
+
+    public static <T> List<T> skip(T[] arr, int count) {
+        return Linq.skip(Arrays.asList(arr), count);
     }
 
     public double sum(IFunc<T, Double> iFunc) {
