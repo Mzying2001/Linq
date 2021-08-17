@@ -12,25 +12,29 @@ public class Linq<T> implements Iterable<T> {
     private Linq() {
     }
 
+    public Linq(T[] arr) {
+        this._list = Linq.toList(arr);
+    }
+
     public Linq(Iterable<T> iterable) {
         this._list = Linq.toList(iterable);
     }
 
-    public Linq(List<T> list) {
-        this._list = new ArrayList<>(list.size());
-        this._list.addAll(list);
+    public Linq(Collection<T> collection) {
+        this._list = new ArrayList<>(collection.size());
+        this._list.addAll(collection);
     }
 
-    public Linq(T[] arr) {
-        this._list = Linq.toList(arr);
+    public static <T> Linq<T> from(T[] arr) {
+        return new Linq<>(arr);
     }
 
     public static <T> Linq<T> from(Iterable<T> iterable) {
         return new Linq<>(iterable);
     }
 
-    public static <T> Linq<T> from(T[] arr) {
-        return new Linq<>(arr);
+    public static <T> Linq<T> from(Collection<T> collection) {
+        return new Linq<>(collection);
     }
 
     public static Linq<Boolean> from(boolean[] arr) {
@@ -244,6 +248,12 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
+    public static <T> List<T> toList(Collection<T> collection) {
+        List<T> list = new ArrayList<>(collection.size());
+        list.addAll(collection);
+        return list;
+    }
+
     public static <T> List<T> toList(T[] arr) {
         List<T> list = new ArrayList<>(arr.length);
         Collections.addAll(list, arr);
@@ -353,10 +363,10 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
-    public static <T> List<T> concat(List<T> list1, List<T> list2) {
-        List<T> ret = new ArrayList<>(list1.size() + list2.size());
-        ret.addAll(list1);
-        ret.addAll(list2);
+    public static <T> List<T> concat(Collection<T> collection1, Collection<T> collection2) {
+        List<T> ret = new ArrayList<>(collection1.size() + collection2.size());
+        ret.addAll(collection1);
+        ret.addAll(collection2);
         return ret;
     }
 
@@ -388,9 +398,9 @@ public class Linq<T> implements Iterable<T> {
         return Linq.toList(set);
     }
 
-    public static <T> List<T> distinct(List<T> list) {
-        Set<T> set = new HashSet<>(list.size());
-        set.addAll(list);
+    public static <T> List<T> distinct(Collection<T> collection) {
+        Set<T> set = new HashSet<>(collection.size());
+        set.addAll(collection);
         List<T> ret = new ArrayList<>(set.size());
         ret.addAll(set);
         return ret;
@@ -446,13 +456,13 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Linq.toList(iterable), ex);
     }
 
-    public static <T> List<T> except(List<T> list, Iterable<T> ex) {
+    public static <T> List<T> except(Collection<T> collection, Iterable<T> ex) {
         Set<T> set = new HashSet<>();
         for (var item : ex) {
             set.add(item);
         }
-        List<T> newList = new ArrayList<>(list.size());
-        for (var item : list) {
+        List<T> newList = new ArrayList<>(collection.size());
+        for (var item : collection) {
             if (!set.contains(item)) {
                 newList.add(item);
             }
@@ -481,9 +491,9 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Linq.toList(iterable), ex, equalityCompare);
     }
 
-    public static <T> List<T> except(List<T> list, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
-        List<T> newList = new ArrayList<>(list.size());
-        for (var item : list) {
+    public static <T> List<T> except(Collection<T> collection, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
+        List<T> newList = new ArrayList<>(collection.size());
+        for (var item : collection) {
             boolean flag = true;
             for (var exItem : ex) {
                 if (equalityCompare.equals(item, exItem)) {
@@ -527,9 +537,9 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
-    public static <T> List<T> reverse(List<T> list) {
-        List<T> ret = new ArrayList<>(list.size());
-        ret.addAll(list);
+    public static <T> List<T> reverse(Collection<T> collection) {
+        List<T> ret = new ArrayList<>(collection.size());
+        ret.addAll(collection);
         Collections.reverse(ret);
         return ret;
     }
@@ -649,9 +659,9 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public static <SourceType, ReturnType>
-    List<ReturnType> select(List<SourceType> list, IFunc<SourceType, ReturnType> iFunc) {
-        List<ReturnType> ret = new ArrayList<>(list.size());
-        for (var item : list) {
+    List<ReturnType> select(Collection<SourceType> collection, IFunc<SourceType, ReturnType> iFunc) {
+        List<ReturnType> ret = new ArrayList<>(collection.size());
+        for (var item : collection) {
             ret.add(iFunc.func(item));
         }
         return ret;
