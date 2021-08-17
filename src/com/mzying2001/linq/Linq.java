@@ -323,6 +323,22 @@ public class Linq<T> implements Iterable<T> {
         return ans;
     }
 
+    public double sum(IFunc<T, Double> iFunc) {
+        return Linq.sum(this, iFunc);
+    }
+
+    public static <T> double sum(Iterable<T> iterable, IFunc<T, Double> iFunc) {
+        double ans = 0d;
+        for (var item : iterable) {
+            ans += iFunc.func(item);
+        }
+        return ans;
+    }
+
+    public static <T> double sum(T[] arr, IFunc<T, Double> iFunc) {
+        return Linq.sum(Arrays.asList(arr), iFunc);
+    }
+
     public static <SourceType, ComparableType extends Comparable<ComparableType>>
     ComparableType min(SourceType[] arr, IFunc<SourceType, ComparableType> iFunc) {
         return Linq.min(Arrays.asList(arr), iFunc);
