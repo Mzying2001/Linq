@@ -213,6 +213,24 @@ public class Linq<T> implements Iterable<T> {
         return ret;
     }
 
+    public Linq<T> defaultIfEmpty(T defaultValue) {
+        if (this.empty()) {
+            this._list.add(defaultValue);
+        }
+        return this;
+    }
+
+    public static <T> List<T> defaultIfEmpty(Iterable<T> iterable, T defaultValue) {
+        List<T> list;
+        if (Linq.empty(iterable)) {
+            list = Linq.toList(iterable);
+        } else {
+            list = new ArrayList<>();
+            list.add(defaultValue);
+        }
+        return list;
+    }
+
     public Linq<T> distinct() {
         Set<T> set = new HashSet<>(this.count());
         set.addAll(this._list);
@@ -275,6 +293,10 @@ public class Linq<T> implements Iterable<T> {
 
     public boolean empty() {
         return this.count() == 0;
+    }
+
+    public static <T> boolean empty(Iterable<T> iterable) {
+        return !iterable.iterator().hasNext();
     }
 
     public Linq<T> except(Iterable<T> iterable) {
