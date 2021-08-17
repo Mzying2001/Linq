@@ -3,7 +3,6 @@ package com.mzying2001.linq;
 import com.mzying2001.linq.interfaces.AggregateFunc;
 import com.mzying2001.linq.interfaces.IEqualityCompare;
 import com.mzying2001.linq.interfaces.IFunc;
-import com.sun.source.tree.LiteralTree;
 
 import java.util.*;
 
@@ -424,19 +423,45 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public T first() {
-        if (this.count() == 0) {
-            return null;
-        } else {
-            return this._list.get(0);
-        }
+        return this.empty() ? null : this._list.get(0);
+    }
+
+    public static <T> T first(Iterable<T> iterable) {
+        return Linq.empty(iterable) ? null : iterable.iterator().next();
     }
 
     public T first(IFunc<T, Boolean> iFunc) {
-        for (var item : this) {
-            if (iFunc.func(item))
+        return Linq.first(this, iFunc);
+    }
+
+    public static <T> T first(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        for (var item : iterable) {
+            if (iFunc.func(item)) {
                 return item;
+            }
         }
         return null;
+    }
+
+    public T firstOrDefault(T defaultValue) {
+        return this.empty() ? defaultValue : this._list.get(0);
+    }
+
+    public static <T> T firstOrDefault(Iterable<T> iterable, T defaultValue) {
+        return Linq.empty(iterable) ? defaultValue : iterable.iterator().next();
+    }
+
+    public T firstOrDefault(IFunc<T, Boolean> iFunc, T defaultValue) {
+        return Linq.firstOrDefault(this, iFunc, defaultValue);
+    }
+
+    public static <T> T firstOrDefault(Iterable<T> iterable, IFunc<T, Boolean> iFunc, T defaultValue) {
+        for (var item : iterable) {
+            if (iFunc.func(item)) {
+                return item;
+            }
+        }
+        return defaultValue;
     }
 
     public static <T> Linq<T> from(T[] arr) {
