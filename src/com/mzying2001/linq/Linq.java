@@ -631,15 +631,34 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
-    public Iterable<T> select() {
+    public List<T> select() {
         return this.toList();
     }
 
-    public <ReturnType> Iterable<ReturnType> select(IFunc<T, ReturnType> iFunc) {
+    public <ReturnType> List<ReturnType> select(IFunc<T, ReturnType> iFunc) {
+        return Linq.select(this._list, iFunc);
+    }
+
+    public static <SourceType, ReturnType>
+    List<ReturnType> select(Iterable<SourceType> iterable, IFunc<SourceType, ReturnType> iFunc) {
         List<ReturnType> list = new ArrayList<>();
-        for (var item : this) {
+        for (var item : iterable) {
             list.add(iFunc.func(item));
         }
         return list;
+    }
+
+    public static <SourceType, ReturnType>
+    List<ReturnType> select(List<SourceType> list, IFunc<SourceType, ReturnType> iFunc) {
+        List<ReturnType> ret = new ArrayList<>(list.size());
+        for (var item : list) {
+            ret.add(iFunc.func(item));
+        }
+        return ret;
+    }
+
+    public static <SourceType, ReturnType>
+    List<ReturnType> select(SourceType[] arr, IFunc<SourceType, ReturnType> iFunc) {
+        return Linq.select(Arrays.asList(arr), iFunc);
     }
 }
