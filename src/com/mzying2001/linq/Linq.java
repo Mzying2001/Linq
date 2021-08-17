@@ -717,6 +717,18 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public static int[] range(int start, int count) {
+        if (count <= 0) {
+            return new int[0];
+        } else {
+            int[] arr = new int[count];
+            for (int i = 0; i < count; i++) {
+                arr[i] = start + i;
+            }
+            return arr;
+        }
+    }
+
     public Linq<T> reverse() {
         Collections.reverse(this._list);
         return this;
