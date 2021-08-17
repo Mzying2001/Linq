@@ -5,7 +5,6 @@ import com.mzying2001.linq.interfaces.IEqualityCompare;
 import com.mzying2001.linq.interfaces.IFunc;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 
 public class Linq<T> implements Iterable<T> {
     private List<T> _list;
