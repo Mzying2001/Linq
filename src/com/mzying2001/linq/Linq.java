@@ -356,6 +356,14 @@ public class Linq<T> implements Iterable<T> {
         return ret;
     }
 
+    public static <T> List<T> concat(Iterable<T> iterable, T[] arr) {
+        return Linq.concat(iterable, Arrays.asList(arr));
+    }
+
+    public static <T> List<T> concat(T[] arr, Iterable<T> iterable) {
+        return Linq.concat(Arrays.asList(arr), iterable);
+    }
+
     public static <T> List<T> concat(T[] arr1, T[] arr2) {
         return Linq.concat(Arrays.asList(arr1), Arrays.asList(arr2));
     }
@@ -447,6 +455,14 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Arrays.asList(arr), ex);
     }
 
+    public static <T> List<T> except(Iterable<T> iterable, T[] ex) {
+        return Linq.except(iterable, Arrays.asList(ex));
+    }
+
+    public static <T> List<T> except(T[] arr, T[] ex) {
+        return Linq.except(Arrays.asList(arr), Arrays.asList(ex));
+    }
+
     public Linq<T> except(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
         this._list = Linq.except(this._list, iterable, equalityCompare);
         return this;
@@ -477,6 +493,14 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Arrays.asList(arr), ex, equalityCompare);
     }
 
+    public static <T> List<T> except(Iterable<T> iterable, T[] ex, IEqualityCompare<T> equalityCompare) {
+        return Linq.except(iterable, Arrays.asList(ex), equalityCompare);
+    }
+
+    public static <T> List<T> except(T[] arr, T[] ex, IEqualityCompare<T> equalityCompare) {
+        return Linq.except(Arrays.asList(arr), Arrays.asList(ex), equalityCompare);
+    }
+
     public Linq<T> reverse() {
         Collections.reverse(this._list);
         return this;
@@ -491,6 +515,20 @@ public class Linq<T> implements Iterable<T> {
         while (!stack.empty()) {
             list.add(stack.pop());
         }
+        return list;
+    }
+
+    public static <T> List<T> reverse(List<T> list) {
+        List<T> ret = new ArrayList<>(list.size());
+        ret.addAll(list);
+        Collections.reverse(ret);
+        return ret;
+    }
+
+    public static <T> List<T> reverse(T[] arr) {
+        List<T> list = new ArrayList<>(arr.length);
+        list.addAll(Arrays.asList(arr));
+        Collections.reverse(list);
         return list;
     }
 
@@ -520,6 +558,18 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
+    public static <T> List<T> union(T[] arr, Iterable<T> iterable) {
+        return Linq.union(Arrays.asList(arr), iterable);
+    }
+
+    public static <T> List<T> union(Iterable<T> iterable, T[] arr) {
+        return Linq.union(iterable, Arrays.asList(arr));
+    }
+
+    public static <T> List<T> union(T[] arr1, T[] arr2) {
+        return Linq.union(Arrays.asList(arr1), Arrays.asList(arr2));
+    }
+
     public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
         return this.concat(iterable).distinct(equalityCompare);
     }
@@ -527,6 +577,18 @@ public class Linq<T> implements Iterable<T> {
     public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityCompare<T> equalityCompare) {
         List<T> list = Linq.concat(iterable1, iterable2);
         return Linq.distinct(list, equalityCompare);
+    }
+
+    public static <T> List<T> union(T[] arr, Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
+        return Linq.union(Arrays.asList(arr), iterable, equalityCompare);
+    }
+
+    public static <T> List<T> union(Iterable<T> iterable, T[] arr, IEqualityCompare<T> equalityCompare) {
+        return Linq.union(iterable, Arrays.asList(arr), equalityCompare);
+    }
+
+    public static <T> List<T> union(T[] arr1, T[] arr2, IEqualityCompare<T> equalityCompare) {
+        return Linq.union(Arrays.asList(arr1), Arrays.asList(arr2), equalityCompare);
     }
 
     public Linq<T> where(IFunc<T, Boolean> iFunc) {
