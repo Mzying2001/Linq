@@ -234,6 +234,28 @@ public class Linq<T> implements Iterable<T> {
         return null;
     }
 
+    public double average(IFunc<T, Double> iFunc) {
+        return Linq.average(this._list, iFunc);
+    }
+
+    public static <T> double average(Iterable<T> iterable, IFunc<T, Double> iFunc) {
+        double sum = 0d;
+        int cnt = 0;
+        for (var item : iterable) {
+            sum += iFunc.func(item);
+            cnt++;
+        }
+        return sum / cnt;
+    }
+
+    public static <T> double average(Collection<T> collection, IFunc<T, Double> iFunc) {
+        return Linq.sum(collection, iFunc) / collection.size();
+    }
+
+    public static <T> double average(T[] arr, IFunc<T, Double> iFunc) {
+        return Linq.average(Arrays.asList(arr), iFunc);
+    }
+
     public <ComparableType extends Comparable<ComparableType>>
     ComparableType max(IFunc<T, ComparableType> iFunc) {
         return Linq.max(this, iFunc);
