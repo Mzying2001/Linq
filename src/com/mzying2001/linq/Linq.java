@@ -341,6 +341,10 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public Linq<T> concat(T[] arr) {
+        return this.concat(Arrays.asList(arr));
+    }
+
     public static <T> List<T> concat(Iterable<T> iterable1, Iterable<T> iterable2) {
         List<T> list = Linq.toList(iterable1);
         for (var item : iterable2) {
@@ -430,6 +434,11 @@ public class Linq<T> implements Iterable<T> {
 
     public Linq<T> except(Iterable<T> iterable) {
         this._list = Linq.except(this._list, iterable);
+        return this;
+    }
+
+    public Linq<T> except(T[] arr) {
+        this._list = Linq.except(this._list, Arrays.asList(arr));
         return this;
     }
 
@@ -545,6 +554,10 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public Linq<T> union(T[] arr) {
+        return this.union(Arrays.asList(arr));
+    }
+
     public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2) {
         Set<T> set = new HashSet<>();
         for (var item : iterable1) {
@@ -572,6 +585,10 @@ public class Linq<T> implements Iterable<T> {
 
     public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
         return this.concat(iterable).distinct(equalityCompare);
+    }
+
+    public Linq<T> union(T[] arr, IEqualityCompare<T> equalityCompare) {
+        return this.concat(arr).distinct(equalityCompare);
     }
 
     public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityCompare<T> equalityCompare) {
