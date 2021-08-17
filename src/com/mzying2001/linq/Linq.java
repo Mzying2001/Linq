@@ -95,6 +95,11 @@ public class Linq<T> implements Iterable<T> {
         return false;
     }
 
+    public Linq<T> append(T value) {
+        this._list.add(value);
+        return this;
+    }
+
     public double average(IFunc<T, Double> iFunc) {
         return Linq.average(this._list, iFunc);
     }
@@ -704,6 +709,11 @@ public class Linq<T> implements Iterable<T> {
     Linq<T> orderByDescending(IFunc<T, ComparableType> iFunc) {
         Sort.quickSort(this._list, iFunc);
         Collections.reverse(this._list);
+        return this;
+    }
+
+    public Linq<T> prepend(T value) {
+        this._list.add(0, value);
         return this;
     }
 
