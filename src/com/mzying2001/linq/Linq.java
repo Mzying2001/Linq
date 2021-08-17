@@ -533,6 +533,14 @@ public class Linq<T> implements Iterable<T> {
         }
     }
 
+    public static <T> T last(Iterable<T> iterable) {
+        T ret = null;
+        for (var item : iterable) {
+            ret = item;
+        }
+        return ret;
+    }
+
     public T last(IFunc<T, Boolean> iFunc) {
         List<T> list = this._list;
         if (list.size() == 0) {
@@ -544,6 +552,57 @@ public class Linq<T> implements Iterable<T> {
                 return item;
         }
         return null;
+    }
+
+    public static <T> T last(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        T ret = null;
+        for (var item : iterable) {
+            if (iFunc.func(item)) {
+                ret = item;
+            }
+        }
+        return ret;
+    }
+
+    public T lastOrDefault(T defaultValue) {
+        int index = this.count() - 1;
+        if (index == -1) {
+            return defaultValue;
+        } else {
+            return this._list.get(index);
+        }
+    }
+
+    public static <T> T lastOrDefault(Iterable<T> iterable, T defaultValue) {
+        T ret = defaultValue;
+        for (var item : iterable) {
+            ret = item;
+        }
+        return ret;
+    }
+
+    public T lastOrDefault(IFunc<T, Boolean> iFunc, T defaultValue) {
+        List<T> list = this._list;
+        if (list.size() == 0) {
+            return defaultValue;
+        }
+        for (int i = list.size() - 1; i >= 0; i--) {
+            T item = list.get(i);
+            if (iFunc.func(item)) {
+                return item;
+            }
+        }
+        return defaultValue;
+    }
+
+    public static <T> T lastOrDefault(Iterable<T> iterable, IFunc<T, Boolean> iFunc, T defaultValue) {
+        T ret = defaultValue;
+        for (var item : iterable) {
+            if (iFunc.func(item)) {
+                ret = item;
+            }
+        }
+        return ret;
     }
 
     public <ComparableType extends Comparable<ComparableType>>
