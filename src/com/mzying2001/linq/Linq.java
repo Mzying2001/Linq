@@ -282,6 +282,53 @@ public class Linq<T> implements Iterable<T> {
         return Linq.max(Arrays.asList(arr), iFunc);
     }
 
+    public <ComparableType extends Comparable<ComparableType>>
+    ComparableType min(IFunc<T, ComparableType> iFunc) {
+        return Linq.min(this, iFunc);
+    }
+
+    public static <ComparableType extends Comparable<ComparableType>>
+    ComparableType min(Iterable<ComparableType> iterable) {
+        Iterator<ComparableType> iterator = iterable.iterator();
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        ComparableType ans = iterator.next();
+        while (iterator.hasNext()) {
+            ComparableType next = iterator.next();
+            if (ans.compareTo(next) > 0) {
+                ans = next;
+            }
+        }
+        return ans;
+    }
+
+    public static <ComparableType extends Comparable<ComparableType>>
+    ComparableType min(ComparableType[] arr) {
+        return Linq.min(Arrays.asList(arr));
+    }
+
+    public static <SourceType, ComparableType extends Comparable<ComparableType>>
+    ComparableType min(Iterable<SourceType> iterable, IFunc<SourceType, ComparableType> iFunc) {
+        Iterator<SourceType> iterator = iterable.iterator();
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        ComparableType ans = iFunc.func(iterator.next());
+        while (iterator.hasNext()) {
+            ComparableType next = iFunc.func(iterator.next());
+            if (ans.compareTo(next) > 0) {
+                ans = next;
+            }
+        }
+        return ans;
+    }
+
+    public static <SourceType, ComparableType extends Comparable<ComparableType>>
+    ComparableType min(SourceType[] arr, IFunc<SourceType, ComparableType> iFunc) {
+        return Linq.min(Arrays.asList(arr), iFunc);
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
