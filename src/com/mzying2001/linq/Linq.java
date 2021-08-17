@@ -670,6 +670,26 @@ public class Linq<T> implements Iterable<T> {
         return Linq.min(Arrays.asList(arr), iFunc);
     }
 
+    public Linq<T> take(int count) {
+        if (this.count() > count) {
+            this._list = Linq.take(this, count);
+        }
+        return this;
+    }
+
+    public static <T> List<T> take(Iterable<T> iterable, int count) {
+        List<T> list = new ArrayList<>(count);
+        Iterator<T> iterator = iterable.iterator();
+        while (iterator.hasNext() && count-- > 0) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
+    public static <T> List<T> take(T[] arr, int count) {
+        return Linq.take(Arrays.asList(arr), count);
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
