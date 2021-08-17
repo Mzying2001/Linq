@@ -291,6 +291,52 @@ public class Linq<T> implements Iterable<T> {
         return Linq.distinct(Arrays.asList(arr), equalityCompare);
     }
 
+    public T elementAt(int index) {
+        if (index < 0) {
+            return null;
+        } else {
+            return index < this.count() ? this._list.get(index) : null;
+        }
+    }
+
+    public static <T> T elementAt(Iterable<T> iterable, int index) {
+        if (index < 0) {
+            return null;
+        }
+        Iterator<T> iterator = iterable.iterator();
+        for (int i = 0; iterator.hasNext(); i++) {
+            if (i == index) {
+                return iterator.next();
+            } else {
+                iterator.next();
+            }
+        }
+        return null;
+    }
+
+    public T elementAtOrDefault(int index, T defaultValue) {
+        if (index < 0) {
+            return defaultValue;
+        } else {
+            return index < this.count() ? this._list.get(index) : defaultValue;
+        }
+    }
+
+    public static <T> T elementAtOrDefault(Iterable<T> iterable, int index, T defaultValue) {
+        if (index < 0) {
+            return defaultValue;
+        }
+        Iterator<T> iterator = iterable.iterator();
+        for (int i = 0; iterator.hasNext(); i++) {
+            if (i == index) {
+                return iterator.next();
+            } else {
+                iterator.next();
+            }
+        }
+        return defaultValue;
+    }
+
     public boolean empty() {
         return this.count() == 0;
     }
