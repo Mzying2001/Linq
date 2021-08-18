@@ -1,5 +1,5 @@
 package com.mzying2001.linq.interfaces;
 
-public interface IEqualityCompare<T> {
+public interface IEqualityComparator<T> {
     boolean equals(T a, T b);
 }

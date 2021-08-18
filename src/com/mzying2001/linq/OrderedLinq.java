@@ -1,26 +1,24 @@
 package com.mzying2001.linq;
 
-import com.mzying2001.linq.interfaces.ICompare;
+import com.mzying2001.linq.interfaces.IComparator;
 import com.mzying2001.linq.interfaces.IFunc;
 
-import java.util.Collections;
-
 public class OrderedLinq<T> extends Linq<T> {
-    private final ICompare<T> _comparator;
+    private final IComparator<T> _comparator;
 
-    private OrderedLinq(Linq<T> linq, ICompare<T> comparator) {
+    private OrderedLinq(Linq<T> linq, IComparator<T> comparator) {
         super();
         this._list = linq._list;
         this._comparator = comparator;
     }
 
     public static <T, ComparableType extends Comparable<ComparableType>>
-    OrderedLinq<T> create(Linq<T> linq, ICompare<T> comparator) {
+    OrderedLinq<T> create(Linq<T> linq, IComparator<T> comparator) {
         return new OrderedLinq<>(linq, comparator);
     }
 
     public static <T, ComparableType extends Comparable<ComparableType>>
-    OrderedLinq<T> create(OrderedLinq<T> orderedLinq, ICompare<T> comparator) {
+    OrderedLinq<T> create(OrderedLinq<T> orderedLinq, IComparator<T> comparator) {
         return new OrderedLinq<>(orderedLinq, (a, b) -> {
             int first = orderedLinq._comparator.compare(a, b);
             return first == 0 ? comparator.compare(a, b) : first;
@@ -49,7 +47,7 @@ public class OrderedLinq<T> extends Linq<T> {
 
     public <ComparableType extends Comparable<ComparableType>>
     OrderedLinq<T> thenByDescending(IFunc<T, ComparableType> iFunc) {
-        ICompare<T> comparator = (a, b) -> -iFunc.func(a).compareTo(iFunc.func(b));
+        IComparator<T> comparator = (a, b) -> -iFunc.func(a).compareTo(iFunc.func(b));
         OrderedLinq<T> ret = OrderedLinq.create(this, comparator);
         Sort.quickSort(ret._list, ret._comparator);
         return ret;

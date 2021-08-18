@@ -1,8 +1,8 @@
 package com.mzying2001.linq;
 
 import com.mzying2001.linq.interfaces.AggregateFunc;
-import com.mzying2001.linq.interfaces.ICompare;
-import com.mzying2001.linq.interfaces.IEqualityCompare;
+import com.mzying2001.linq.interfaces.IComparator;
+import com.mzying2001.linq.interfaces.IEqualityComparator;
 import com.mzying2001.linq.interfaces.IFunc;
 
 import java.util.*;
@@ -281,16 +281,16 @@ public class Linq<T> implements Iterable<T> {
         return Linq.distinct(Arrays.asList(arr));
     }
 
-    public Linq<T> distinct(IEqualityCompare<T> equalityCompare) {
-        this._list = Linq.distinct(this._list, equalityCompare);
+    public Linq<T> distinct(IEqualityComparator<T> equalityComparator) {
+        this._list = Linq.distinct(this._list, equalityComparator);
         return this;
     }
 
-    public static <T> List<T> distinct(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        return Linq.distinct(Linq.toList(iterable), equalityCompare);
+    public static <T> List<T> distinct(Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return Linq.distinct(Linq.toList(iterable), equalityComparator);
     }
 
-    public static <T> List<T> distinct(List<T> list, IEqualityCompare<T> equalityCompare) {
+    public static <T> List<T> distinct(List<T> list, IEqualityComparator<T> equalityComparator) {
         Set<Integer> skipIndexes = new HashSet<>(list.size());
         List<T> newList = new ArrayList<>(list.size());
         int listSize = list.size();
@@ -300,7 +300,7 @@ public class Linq<T> implements Iterable<T> {
             }
             T item = list.get(i);
             for (int j = i + 1; j < listSize; j++) {
-                if (equalityCompare.equals(item, list.get(j))) {
+                if (equalityComparator.equals(item, list.get(j))) {
                     skipIndexes.add(j);
                 }
             }
@@ -309,8 +309,8 @@ public class Linq<T> implements Iterable<T> {
         return newList;
     }
 
-    public static <T> List<T> distinct(T[] arr, IEqualityCompare<T> equalityCompare) {
-        return Linq.distinct(Arrays.asList(arr), equalityCompare);
+    public static <T> List<T> distinct(T[] arr, IEqualityComparator<T> equalityComparator) {
+        return Linq.distinct(Arrays.asList(arr), equalityComparator);
     }
 
     public T elementAt(int index) {
@@ -407,21 +407,21 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Arrays.asList(arr), Arrays.asList(ex));
     }
 
-    public Linq<T> except(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        this._list = Linq.except(this._list, iterable, equalityCompare);
+    public Linq<T> except(Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        this._list = Linq.except(this._list, iterable, equalityComparator);
         return this;
     }
 
-    public static <T> List<T> except(Iterable<T> iterable, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
-        return Linq.except(Linq.toList(iterable), ex, equalityCompare);
+    public static <T> List<T> except(Iterable<T> iterable, Iterable<T> ex, IEqualityComparator<T> equalityComparator) {
+        return Linq.except(Linq.toList(iterable), ex, equalityComparator);
     }
 
-    public static <T> List<T> except(Collection<T> collection, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
+    public static <T> List<T> except(Collection<T> collection, Iterable<T> ex, IEqualityComparator<T> equalityComparator) {
         List<T> newList = new ArrayList<>(collection.size());
         for (var item : collection) {
             boolean flag = true;
             for (var exItem : ex) {
-                if (equalityCompare.equals(item, exItem)) {
+                if (equalityComparator.equals(item, exItem)) {
                     flag = false;
                     break;
                 }
@@ -433,16 +433,16 @@ public class Linq<T> implements Iterable<T> {
         return newList;
     }
 
-    public static <T> List<T> except(T[] arr, Iterable<T> ex, IEqualityCompare<T> equalityCompare) {
-        return Linq.except(Arrays.asList(arr), ex, equalityCompare);
+    public static <T> List<T> except(T[] arr, Iterable<T> ex, IEqualityComparator<T> equalityComparator) {
+        return Linq.except(Arrays.asList(arr), ex, equalityComparator);
     }
 
-    public static <T> List<T> except(Iterable<T> iterable, T[] ex, IEqualityCompare<T> equalityCompare) {
-        return Linq.except(iterable, Arrays.asList(ex), equalityCompare);
+    public static <T> List<T> except(Iterable<T> iterable, T[] ex, IEqualityComparator<T> equalityComparator) {
+        return Linq.except(iterable, Arrays.asList(ex), equalityComparator);
     }
 
-    public static <T> List<T> except(T[] arr, T[] ex, IEqualityCompare<T> equalityCompare) {
-        return Linq.except(Arrays.asList(arr), Arrays.asList(ex), equalityCompare);
+    public static <T> List<T> except(T[] arr, T[] ex, IEqualityComparator<T> equalityComparator) {
+        return Linq.except(Arrays.asList(arr), Arrays.asList(ex), equalityComparator);
     }
 
     public T first() {
@@ -725,7 +725,7 @@ public class Linq<T> implements Iterable<T> {
 
     public <ComparableType extends Comparable<ComparableType>>
     OrderedLinq<T> orderByDescending(IFunc<T, ComparableType> iFunc) {
-        ICompare<T> comparator = (a, b) -> -iFunc.func(a).compareTo(iFunc.func(b));
+        IComparator<T> comparator = (a, b) -> -iFunc.func(a).compareTo(iFunc.func(b));
         Sort.quickSort(this._list, comparator);
         return OrderedLinq.create(this, comparator);
     }
@@ -1115,29 +1115,30 @@ public class Linq<T> implements Iterable<T> {
         return Linq.union(Arrays.asList(arr1), Arrays.asList(arr2));
     }
 
-    public Linq<T> union(Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        return this.concat(iterable).distinct(equalityCompare);
+    public Linq<T> union(Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return this.concat(iterable).distinct(equalityComparator);
     }
 
-    public Linq<T> union(T[] arr, IEqualityCompare<T> equalityCompare) {
-        return this.concat(arr).distinct(equalityCompare);
+    public Linq<T> union(T[] arr, IEqualityComparator<T> equalityComparator) {
+        return this.concat(arr).distinct(equalityComparator);
     }
 
-    public static <T> List<T> union(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityCompare<T> equalityCompare) {
+    public static <T>
+    List<T> union(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityComparator<T> equalityComparator) {
         List<T> list = Linq.concat(iterable1, iterable2);
-        return Linq.distinct(list, equalityCompare);
+        return Linq.distinct(list, equalityComparator);
     }
 
-    public static <T> List<T> union(T[] arr, Iterable<T> iterable, IEqualityCompare<T> equalityCompare) {
-        return Linq.union(Arrays.asList(arr), iterable, equalityCompare);
+    public static <T> List<T> union(T[] arr, Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return Linq.union(Arrays.asList(arr), iterable, equalityComparator);
     }
 
-    public static <T> List<T> union(Iterable<T> iterable, T[] arr, IEqualityCompare<T> equalityCompare) {
-        return Linq.union(iterable, Arrays.asList(arr), equalityCompare);
+    public static <T> List<T> union(Iterable<T> iterable, T[] arr, IEqualityComparator<T> equalityComparator) {
+        return Linq.union(iterable, Arrays.asList(arr), equalityComparator);
     }
 
-    public static <T> List<T> union(T[] arr1, T[] arr2, IEqualityCompare<T> equalityCompare) {
-        return Linq.union(Arrays.asList(arr1), Arrays.asList(arr2), equalityCompare);
+    public static <T> List<T> union(T[] arr1, T[] arr2, IEqualityComparator<T> equalityComparator) {
+        return Linq.union(Arrays.asList(arr1), Arrays.asList(arr2), equalityComparator);
     }
 
     public Linq<T> where(IFunc<T, Boolean> iFunc) {

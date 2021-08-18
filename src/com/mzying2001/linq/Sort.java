@@ -1,6 +1,6 @@
 package com.mzying2001.linq;
 
-import com.mzying2001.linq.interfaces.ICompare;
+import com.mzying2001.linq.interfaces.IComparator;
 import com.mzying2001.linq.interfaces.IFunc;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class Sort {
             quickSort(list, iFunc, 0, list.size() - 1);
     }
 
-    public static <T> void quickSort(List<T> list, ICompare<T> comparator, int low, int high) {
+    public static <T> void quickSort(List<T> list, IComparator<T> comparator, int low, int high) {
         if (low >= high)
             return;
 
@@ -71,7 +71,7 @@ public class Sort {
         quickSort(list, comparator, l + 1, high);
     }
 
-    public static <T> void quickSort(List<T> list, ICompare<T> comparator) {
+    public static <T> void quickSort(List<T> list, IComparator<T> comparator) {
         if (list.size() > 1)
             quickSort(list, comparator, 0, list.size() - 1);
     }
