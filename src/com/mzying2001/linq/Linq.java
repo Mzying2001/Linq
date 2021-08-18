@@ -1,15 +1,16 @@
 package com.mzying2001.linq;
 
 import com.mzying2001.linq.interfaces.AggregateFunc;
+import com.mzying2001.linq.interfaces.ICompare;
 import com.mzying2001.linq.interfaces.IEqualityCompare;
 import com.mzying2001.linq.interfaces.IFunc;
 
 import java.util.*;
 
 public class Linq<T> implements Iterable<T> {
-    private List<T> _list;
+    protected List<T> _list;
 
-    private Linq() {
+    protected Linq() {
     }
 
     public Linq(T[] arr) {
@@ -717,16 +718,16 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public <ComparableType extends Comparable<ComparableType>>
-    Linq<T> orderBy(IFunc<T, ComparableType> iFunc) {
+    OrderedLinq<T> orderBy(IFunc<T, ComparableType> iFunc) {
         Sort.quickSort(this._list, iFunc);
-        return this;
+        return OrderedLinq.create(this, iFunc);
     }
 
     public <ComparableType extends Comparable<ComparableType>>
-    Linq<T> orderByDescending(IFunc<T, ComparableType> iFunc) {
-        Sort.quickSort(this._list, iFunc);
-        Collections.reverse(this._list);
-        return this;
+    OrderedLinq<T> orderByDescending(IFunc<T, ComparableType> iFunc) {
+        ICompare<T> comparator = (a, b) -> -iFunc.func(a).compareTo(iFunc.func(b));
+        Sort.quickSort(this._list, comparator);
+        return OrderedLinq.create(this, comparator);
     }
 
     public Linq<T> prepend(T value) {
