@@ -544,6 +544,10 @@ public class Linq<T> implements Iterable<T> {
         return linq;
     }
 
+    public List<T> getList() {
+        return this._list;
+    }
+
     public T last() {
         int index = this.count() - 1;
         if (index == -1) {
