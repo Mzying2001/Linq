@@ -359,7 +359,7 @@ public class Linq<T> implements Iterable<T> {
     }
 
     public boolean empty() {
-        return this.count() == 0;
+        return this._list.isEmpty();
     }
 
     public static <T> boolean empty(Iterable<T> iterable) {
@@ -884,6 +884,25 @@ public class Linq<T> implements Iterable<T> {
 
     public static <T> List<T> skip(T[] arr, int count) {
         return Linq.skip(Arrays.asList(arr), count);
+    }
+
+    public Linq<T> skipLast(int count) {
+        while (!this.empty() && count-- > 0) {
+            this._list.remove(this.count() - 1);
+        }
+        return this;
+    }
+
+    public static <T> List<T> skipLast(Iterable<T> iterable, int count) {
+        List<T> list = Linq.toList(iterable);
+        while (!list.isEmpty() && count-- > 0) {
+            list.remove(list.size() - 1);
+        }
+        return list;
+    }
+
+    public static <T> List<T> skipLast(T[] arr, int count) {
+        return Linq.skipLast(Arrays.asList(arr), count);
     }
 
     public double sum(IFunc<T, Double> iFunc) {
