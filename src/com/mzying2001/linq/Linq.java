@@ -975,6 +975,74 @@ public class Linq<T> implements Iterable<T> {
         return Linq.sequenceEqual(Arrays.asList(arr1), Arrays.asList(arr2, equalityComparator));
     }
 
+    public T single() {
+        return this.count() == 1 ? this.first() : null;
+    }
+
+    public static <T> T single(Iterable<T> iterable) {
+        Iterator<T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            T first = iterator.next();
+            return iterator.hasNext() ? null : first;
+        } else {
+            return null;
+        }
+    }
+
+    public T single(IFunc<T, Boolean> iFunc) {
+        if (this.count() == 1) {
+            T first = this.first();
+            return iFunc.func(first) ? first : null;
+        } else {
+            return null;
+        }
+    }
+
+    public static <T> T single(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        Iterator<T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            T first = iterator.next();
+            if (!iterator.hasNext() && iFunc.func(first)) {
+                return first;
+            }
+        }
+        return null;
+    }
+
+    public T singleOrDefault(T defaultValue) {
+        return this.count() == 1 ? this.first() : defaultValue;
+    }
+
+    public static <T> T singleOrDefault(Iterable<T> iterable, T defaultValue) {
+        Iterator<T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            T first = iterator.next();
+            return iterator.hasNext() ? defaultValue : first;
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public T singleOrDefault(IFunc<T, Boolean> iFunc, T defaultValue) {
+        if (this.count() == 1) {
+            T first = this.first();
+            return iFunc.func(first) ? first : defaultValue;
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public static <T> T singleOrDefault(Iterable<T> iterable, IFunc<T, Boolean> iFunc, T defaultValue) {
+        Iterator<T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            T first = iterator.next();
+            if (!iterator.hasNext() && iFunc.func(first)) {
+                return first;
+            }
+        }
+        return defaultValue;
+    }
+
     public Linq<T> skip(int count) {
         this._list = Linq.skip(this._list, count);
         return this;
