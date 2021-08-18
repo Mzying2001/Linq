@@ -548,6 +548,66 @@ public class Linq<T> implements Iterable<T> {
         return this._list;
     }
 
+    public <KeyType> Linq<Group<KeyType, T>> groupBy(IFunc<T, KeyType> getKeyFunc) {
+        Linq<Group<KeyType, T>> linq = new Linq<>();
+        linq._list = Linq.groupBy(this._list, getKeyFunc);
+        return linq;
+    }
+
+    public static <K, V> List<Group<K, V>> groupBy(Iterable<V> iterable, IFunc<V, K> getKeyFunc) {
+        Map<K, Group<K, V>> map = new HashMap<>();
+        for (var item : iterable) {
+            K key = getKeyFunc.func(item);
+            if (map.containsKey(key)) {
+                map.get(key).add(item);
+            } else {
+                map.put(key, new Group<>(key, item));
+            }
+        }
+        List<Group<K, V>> list = new ArrayList<>(map.size());
+        list.addAll(map.values());
+        return list;
+    }
+
+    public static <K, V> List<Group<K, V>> groupBy(V[] arr, IFunc<V, K> getKeyFunc) {
+        return Linq.groupBy(Arrays.asList(arr), getKeyFunc);
+    }
+
+    public <KeyType>
+    Linq<Group<KeyType, T>> groupBy(IFunc<T, KeyType> getKeyFunc, IEqualityComparator<KeyType> keyEqualityComparator) {
+        Linq<Group<KeyType, T>> linq = new Linq<>();
+        linq._list = Linq.groupBy(this, getKeyFunc, keyEqualityComparator);
+        return linq;
+    }
+
+    public static <K, V> List<Group<K, V>> groupBy(
+            Iterable<V> iterable,
+            IFunc<V, K> getKeyFunc,
+            IEqualityComparator<K> keyEqualityComparator
+    ) {
+        List<Group<K, V>> list = new ArrayList<>();
+        for (var value : iterable) {
+            K key = getKeyFunc.func(value);
+            boolean flag = true;
+            for (var group : list) {
+                if (keyEqualityComparator.equals(key, group.getKey())) {
+                    group.add(value);
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                list.add(new Group<>(key, value));
+            }
+        }
+        return list;
+    }
+
+    public static <K, V>
+    List<Group<K, V>> groupBy(V[] arr, IFunc<V, K> getKeyFunc, IEqualityComparator<K> keyEqualityComparator) {
+        return Linq.groupBy(Arrays.asList(arr), getKeyFunc, keyEqualityComparator);
+    }
+
     public T last() {
         int index = this.count() - 1;
         if (index == -1) {
