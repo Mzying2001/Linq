@@ -1335,6 +1335,30 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
+    public <KeyType> Map<KeyType, T> toMap(IFunc<T, KeyType> iFunc) {
+        return Linq.toMap(this._list, iFunc);
+    }
+
+    public static <K, V> Map<K, V> toMap(Iterable<V> iterable, IFunc<V, K> iFunc) {
+        Map<K, V> map = new HashMap<>();
+        for (var item : iterable) {
+            map.put(iFunc.func(item), item);
+        }
+        return map;
+    }
+
+    public static <K, V> Map<K, V> toMap(Collection<V> collection, IFunc<V, K> iFunc) {
+        Map<K, V> map = new HashMap<>(collection.size());
+        for (var item : collection) {
+            map.put(iFunc.func(item), item);
+        }
+        return map;
+    }
+
+    public static <K, V> Map<K, V> toMap(V[] arr, IFunc<V, K> iFunc) {
+        return Linq.toMap(Arrays.asList(arr), iFunc);
+    }
+
     public Linq<T> union(Iterable<T> iterable) {
         Set<T> set = new HashSet<>();
         for (var item : this) {
