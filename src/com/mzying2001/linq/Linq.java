@@ -413,7 +413,8 @@ public class Linq<T> implements Iterable<T> {
         return Linq.except(Linq.toList(iterable), ex, equalityComparator);
     }
 
-    public static <T> List<T> except(Collection<T> collection, Iterable<T> ex, IEqualityComparator<T> equalityComparator) {
+    public static <T> List<T>
+    except(Collection<T> collection, Iterable<T> ex, IEqualityComparator<T> equalityComparator) {
         List<T> newList = new ArrayList<>(collection.size());
         for (var item : collection) {
             boolean flag = true;
