@@ -821,12 +821,14 @@ public class Linq<T> implements Iterable<T> {
         return list;
     }
 
-    public List<T> select() {
-        return this.toList();
+    public Linq<T> select() {
+        return this;
     }
 
-    public <ReturnType> List<ReturnType> select(IFunc<T, ReturnType> iFunc) {
-        return Linq.select(this._list, iFunc);
+    public <ReturnType> Linq<ReturnType> select(IFunc<T, ReturnType> iFunc) {
+        Linq<ReturnType> linq = new Linq<>();
+        linq._list = Linq.select(this._list, iFunc);
+        return linq;
     }
 
     public static <SourceType, ReturnType>
@@ -850,6 +852,60 @@ public class Linq<T> implements Iterable<T> {
     public static <SourceType, ReturnType>
     List<ReturnType> select(SourceType[] arr, IFunc<SourceType, ReturnType> iFunc) {
         return Linq.select(Arrays.asList(arr), iFunc);
+    }
+
+    public <ReturnType, IterableType extends Iterable<ReturnType>>
+    Linq<ReturnType> selectMany(IFunc<T, IterableType> iFunc) {
+        Linq<ReturnType> linq = new Linq<>();
+        linq._list = Linq.selectMany(this, iFunc);
+        return linq;
+    }
+
+    public static <SourceType, ReturnType, IterableType extends Iterable<ReturnType>>
+    List<ReturnType> selectMany(Iterable<SourceType> iterable, IFunc<SourceType, IterableType> iFunc) {
+        List<ReturnType> list = new ArrayList<>();
+        for (var outItem : iterable) {
+            for (var inItem : iFunc.func(outItem)) {
+                list.add(inItem);
+            }
+        }
+        return list;
+    }
+
+    public static <SourceType, ReturnType, IterableType extends Iterable<ReturnType>>
+    List<ReturnType> selectMany(SourceType[] arr, IFunc<SourceType, IterableType> iFunc) {
+        return Linq.selectMany(Arrays.asList(arr), iFunc);
+    }
+
+    public <ReturnType, IterItemType, IterableType extends Iterable<IterItemType>>
+    Linq<ReturnType> selectMany(IFunc<T, IterableType> getIterFunc, IFunc<IterItemType, ReturnType> selectFunc) {
+        Linq<ReturnType> linq = new Linq<>();
+        linq._list = Linq.selectMany(this, getIterFunc, selectFunc);
+        return linq;
+    }
+
+    public static <SourceType, ReturnType, IterItemType, IterableType extends Iterable<IterItemType>>
+    List<ReturnType> selectMany(
+            Iterable<SourceType> iterable,
+            IFunc<SourceType, IterableType> getIterFunc,
+            IFunc<IterItemType, ReturnType> selectFunc
+    ) {
+        List<ReturnType> list = new ArrayList<>();
+        for (var outItem : iterable) {
+            for (var inItem : getIterFunc.func(outItem)) {
+                list.add(selectFunc.func(inItem));
+            }
+        }
+        return list;
+    }
+
+    public static <SourceType, ReturnType, IterItemType, IterableType extends Iterable<IterItemType>>
+    List<ReturnType> selectMany(
+            SourceType[] arr,
+            IFunc<SourceType, IterableType> getIterFunc,
+            IFunc<IterItemType, ReturnType> selectFunc
+    ) {
+        return Linq.selectMany(Arrays.asList(arr), getIterFunc, selectFunc);
     }
 
     public Linq<T> skip(int count) {
