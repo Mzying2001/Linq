@@ -927,6 +927,42 @@ public class Linq<T> implements Iterable<T> {
         return Linq.take(Arrays.asList(arr), count);
     }
 
+    public Linq<T> takeLast(int count) {
+        if (count <= 0) {
+            this._list.clear();
+            return this;
+        } else if (this.count() <= count) {
+            return this;
+        }
+        List<T> oldList = this._list;
+        List<T> newList = new ArrayList<>(count);
+        for (int i = oldList.size() - count; i < oldList.size(); i++) {
+            newList.add(oldList.get(i));
+        }
+        this._list = newList;
+        return this;
+    }
+
+    public static <T> List<T> takeLast(Iterable<T> iterable, int count) {
+        if (count <= 0) {
+            return new ArrayList<>();
+        }
+        Stack<T> stack = new Stack<>();
+        for (var item : iterable) {
+            stack.push(item);
+        }
+        List<T> list = new ArrayList<>(count);
+        while (!stack.empty() && count-- > 0) {
+            list.add(stack.pop());
+        }
+        Collections.reverse(list);
+        return list;
+    }
+
+    public static <T> List<T> takeLast(T[] arr, int count) {
+        return Linq.takeLast(Arrays.asList(arr), count);
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
