@@ -906,6 +906,47 @@ public class Linq<T> implements Iterable<T> {
         return Linq.skipLast(Arrays.asList(arr), count);
     }
 
+    public Linq<T> skipWhile(IFunc<T, Boolean> iFunc) {
+        this._list = Linq.skipWhile(this._list, iFunc);
+        return this;
+    }
+
+    public static <T> List<T> skipWhile(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        List<T> list = new ArrayList<>();
+        Iterator<T> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (!iFunc.func(next)) {
+                list.add(next);
+                break;
+            }
+        }
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
+    public static <T> List<T> skipWhile(Collection<T> collection, IFunc<T, Boolean> iFunc) {
+        List<T> list = new ArrayList<>(collection.size());
+        Iterator<T> iterator = collection.iterator();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (!iFunc.func(next)) {
+                list.add(next);
+                break;
+            }
+        }
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
+    public static <T> List<T> skipWhile(T[] arr, IFunc<T, Boolean> iFunc) {
+        return Linq.skipWhile(Arrays.asList(arr), iFunc);
+    }
+
     public double sum(IFunc<T, Double> iFunc) {
         return Linq.sum(this, iFunc);
     }
