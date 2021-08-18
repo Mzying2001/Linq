@@ -729,6 +729,32 @@ public class Linq<T> implements Iterable<T> {
         }
     }
 
+    public Linq<T> repeat(int count) {
+        this._list = Linq.repeat(this._list, count);
+        return this;
+    }
+
+    public static <T> List<T> repeat(Iterable<T> iterable, int count) {
+        List<T> list = new ArrayList<>();
+        while (count-- > 0) {
+            for (var item : iterable) {
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> repeat(Collection<T> collection, int count) {
+        if (count <= 0) {
+            return new ArrayList<>();
+        }
+        List<T> list = new ArrayList<>(collection.size() * count);
+        while (count-- > 0) {
+            list.addAll(collection);
+        }
+        return list;
+    }
+
     public Linq<T> reverse() {
         Collections.reverse(this._list);
         return this;
