@@ -912,6 +912,69 @@ public class Linq<T> implements Iterable<T> {
         return Linq.selectMany(Arrays.asList(arr), getIterFunc, selectFunc);
     }
 
+    public boolean sequenceEqual(Iterable<T> iterable) {
+        return Linq.sequenceEqual(this, iterable);
+    }
+
+    public boolean sequenceEqual(T[] arr) {
+        return Linq.sequenceEqual(this, Arrays.asList(arr));
+    }
+
+    public static <T> boolean sequenceEqual(Iterable<T> iterable1, Iterable<T> iterable2) {
+        Iterator<T> iterator1 = iterable1.iterator();
+        Iterator<T> iterator2 = iterable2.iterator();
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            if (!iterator1.next().equals(iterator2.next())) {
+                return false;
+            }
+        }
+        return !(iterator1.hasNext() || iterator2.hasNext());
+    }
+
+    public static <T> boolean sequenceEqual(Iterable<T> iterable, T[] arr) {
+        return Linq.sequenceEqual(iterable, Arrays.asList(arr));
+    }
+
+    public static <T> boolean sequenceEqual(T[] arr, Iterable<T> iterable) {
+        return Linq.sequenceEqual(Arrays.asList(arr), iterable);
+    }
+
+    public static <T> boolean sequenceEqual(T[] arr1, T[] arr2) {
+        return Linq.sequenceEqual(Arrays.asList(arr1), Arrays.asList(arr2));
+    }
+
+    public boolean sequenceEqual(Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return Linq.sequenceEqual(this, iterable, equalityComparator);
+    }
+
+    public boolean sequenceEqual(T[] arr, IEqualityComparator<T> equalityComparator) {
+        return this.sequenceEqual(Arrays.asList(arr), equalityComparator);
+    }
+
+    public static <T>
+    boolean sequenceEqual(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityComparator<T> equalityComparator) {
+        Iterator<T> iterator1 = iterable1.iterator();
+        Iterator<T> iterator2 = iterable2.iterator();
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            if (!equalityComparator.equals(iterator1.next(), iterator2.next())) {
+                return false;
+            }
+        }
+        return !(iterator1.hasNext() || iterator2.hasNext());
+    }
+
+    public static <T> boolean sequenceEqual(Iterable<T> iterable, T[] arr, IEqualityComparator<T> equalityComparator) {
+        return Linq.sequenceEqual(iterable, Arrays.asList(arr), equalityComparator);
+    }
+
+    public static <T> boolean sequenceEqual(T[] arr, Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return Linq.sequenceEqual(Arrays.asList(arr), iterable, equalityComparator);
+    }
+
+    public static <T> boolean sequenceEqual(T[] arr1, T[] arr2, IEqualityComparator<T> equalityComparator) {
+        return Linq.sequenceEqual(Arrays.asList(arr1), Arrays.asList(arr2, equalityComparator));
+    }
+
     public Linq<T> skip(int count) {
         this._list = Linq.skip(this._list, count);
         return this;
