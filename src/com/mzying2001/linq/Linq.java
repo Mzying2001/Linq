@@ -1024,6 +1024,39 @@ public class Linq<T> implements Iterable<T> {
         return Linq.takeLast(Arrays.asList(arr), count);
     }
 
+    public Linq<T> takeWhile(IFunc<T, Boolean> iFunc) {
+        this._list = Linq.takeWhile(this._list, iFunc);
+        return this;
+    }
+
+    public static <T> List<T> takeWhile(Iterable<T> iterable, IFunc<T, Boolean> iFunc) {
+        List<T> list = new ArrayList<>();
+        for (var item : iterable) {
+            if (iFunc.func(item)) {
+                list.add(item);
+            } else {
+                break;
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> takeWhile(Collection<T> collection, IFunc<T, Boolean> iFunc) {
+        List<T> list = new ArrayList<>(collection.size());
+        for (var item : collection) {
+            if (iFunc.func(item)) {
+                list.add(item);
+            } else {
+                break;
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> takeWhile(T[] arr, IFunc<T, Boolean> iFunc) {
+        return Linq.takeWhile(Arrays.asList(arr), iFunc);
+    }
+
     public List<T> toList() {
         List<T> list = new ArrayList<>(this._list.size());
         list.addAll(this._list);
