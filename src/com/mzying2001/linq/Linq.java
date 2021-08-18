@@ -1,9 +1,6 @@
 package com.mzying2001.linq;
 
-import com.mzying2001.linq.interfaces.AggregateFunc;
-import com.mzying2001.linq.interfaces.IComparator;
-import com.mzying2001.linq.interfaces.IEqualityComparator;
-import com.mzying2001.linq.interfaces.IFunc;
+import com.mzying2001.linq.interfaces.*;
 
 import java.util.*;
 
@@ -1223,5 +1220,50 @@ public class Linq<T> implements Iterable<T> {
         }
         this._list = list;
         return this;
+    }
+
+    public <ResultType> Linq<ResultType> zip(Iterable<T> iterable, IZipFunc<T, ResultType> zipFunc) {
+        return this.zip(Linq.toList(iterable), zipFunc);
+    }
+
+    public <ResultType> Linq<ResultType> zip(List<T> list, IZipFunc<T, ResultType> zipFunc) {
+        List<ResultType> newList = Linq.zip(this._list, list, zipFunc);
+        Linq<ResultType> linq = new Linq<>();
+        linq._list = newList;
+        return linq;
+    }
+
+    public <ResultType> Linq<ResultType> zip(T[] arr, IZipFunc<T, ResultType> zipFunc) {
+        return this.zip(Arrays.asList(arr), zipFunc);
+    }
+
+    public static <SourceType, ResultType>
+    List<ResultType> zip(List<SourceType> list1, List<SourceType> list2, IZipFunc<SourceType, ResultType> zipFunc) {
+        int size = Math.min(list1.size(), list2.size());
+        List<ResultType> newList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            newList.add(zipFunc.zip(list1.get(i), list2.get(i)));
+        }
+        return newList;
+    }
+
+    public static <SourceType, ResultType>
+    List<ResultType> zip(Iterable<SourceType> it1, Iterable<SourceType> it2, IZipFunc<SourceType, ResultType> zipFunc) {
+        return Linq.zip(Linq.toList(it1), Linq.toList(it2), zipFunc);
+    }
+
+    public static <SourceType, ResultType>
+    List<ResultType> zip(Iterable<SourceType> iterable, SourceType[] arr, IZipFunc<SourceType, ResultType> zipFunc) {
+        return Linq.zip(Linq.toList(iterable), Arrays.asList(arr), zipFunc);
+    }
+
+    public static <SourceType, ResultType>
+    List<ResultType> zip(SourceType[] arr, Iterable<SourceType> iterable, IZipFunc<SourceType, ResultType> zipFunc) {
+        return Linq.zip(Arrays.asList(arr), Linq.toList(iterable), zipFunc);
+    }
+
+    public static <SourceType, ResultType>
+    List<ResultType> zip(SourceType[] arr1, SourceType[] arr2, IZipFunc<SourceType, ResultType> zipFunc) {
+        return Linq.zip(Arrays.asList(arr1), Arrays.asList(arr2), zipFunc);
     }
 }
