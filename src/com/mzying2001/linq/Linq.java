@@ -100,6 +100,23 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public static <T> List<T> append(Iterable<T> iterable, T value) {
+        List<T> list = Linq.toList(iterable);
+        list.add(value);
+        return list;
+    }
+
+    public static <T> List<T> append(Collection<T> collection, T value) {
+        List<T> list = new ArrayList<>(collection.size() + 1);
+        list.addAll(collection);
+        list.add(value);
+        return list;
+    }
+
+    public static <T> List<T> append(T[] arr, T value) {
+        return Linq.append(Arrays.asList(arr), value);
+    }
+
     public double average(IFunc<T, Double> iFunc) {
         return Linq.average(this._list, iFunc);
     }
@@ -717,6 +734,22 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public static <T> List<T> prepend(Iterable<T> iterable, T value) {
+        List<T> list = new ArrayList<>();
+        list.add(value);
+        for (var item : iterable) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    public static <T> List<T> prepend(Collection<T> collection, T value) {
+        List<T> list = new ArrayList<>(collection.size() + 1);
+        list.add(value);
+        list.addAll(collection);
+        return list;
+    }
+
     public static int[] range(int start, int count) {
         if (count <= 0) {
             return new int[0];
@@ -753,6 +786,10 @@ public class Linq<T> implements Iterable<T> {
             list.addAll(collection);
         }
         return list;
+    }
+
+    public static <T> List<T> repeat(T[] arr, int count) {
+        return Linq.repeat(Arrays.asList(arr), count);
     }
 
     public Linq<T> reverse() {
