@@ -686,6 +686,117 @@ public class Linq<T> implements Iterable<T> {
         );
     }
 
+    public <InnerType, KeyType, ResultType> Linq<ResultType> join(
+            Iterable<InnerType> inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        Linq<ResultType> linq = new Linq<>();
+        linq._list = Linq.join(
+                this,
+                inner,
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+        return linq;
+    }
+
+    public <InnerType, KeyType, ResultType> Linq<ResultType> join(
+            InnerType[] inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return this.join(
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            Iterable<OuterType> outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        List<Pair<KeyType, InnerType>> innerKeyPairs
+                = Linq.select(inner, item -> new Pair(innerKeySelector.func(item), item));
+        List<ResultType> resultList = new ArrayList<>();
+        for (var outerItem : outer) {
+            for (var innerKeyPair : innerKeyPairs) {
+                if (keyEqualityComparator.equals(innerKeyPair.item1, outerKeySelector.func(outerItem))) {
+                    resultList.add(resultSelector.func(outerItem, innerKeyPair.item2));
+                    break;
+                }
+            }
+        }
+        return resultList;
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            Iterable<OuterType> outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.join(
+                outer,
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            OuterType[] outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.join(
+                Arrays.asList(outer),
+                inner,
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            OuterType[] outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.join(
+                Arrays.asList(outer),
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
     public T last() {
         int index = this.count() - 1;
         if (index == -1) {
