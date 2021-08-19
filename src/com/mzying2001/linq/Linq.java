@@ -33,11 +33,11 @@ public class Linq<T> implements Iterable<T> {
         return this._list.toString();
     }
 
-    public T aggregate(AggregateFunc<T> aggregateFunc) {
+    public T aggregate(IAggregateFunc<T> aggregateFunc) {
         return Linq.aggregate(this, aggregateFunc);
     }
 
-    public static <T> T aggregate(Iterable<T> iterable, AggregateFunc<T> aggregateFunc) {
+    public static <T> T aggregate(Iterable<T> iterable, IAggregateFunc<T> aggregateFunc) {
         Iterator<T> iterator = iterable.iterator();
         if (!iterator.hasNext()) {
             return null;
@@ -49,7 +49,7 @@ public class Linq<T> implements Iterable<T> {
         return result;
     }
 
-    public static <T> T aggregate(T[] arr, AggregateFunc<T> aggregateFunc) {
+    public static <T> T aggregate(T[] arr, IAggregateFunc<T> aggregateFunc) {
         return Linq.aggregate(Arrays.asList(arr), aggregateFunc);
     }
 
