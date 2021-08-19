@@ -1285,6 +1285,39 @@ public class Linq<T> implements Iterable<T> {
         return ans;
     }
 
+    public <TargetType> Linq<TargetType> ofType(Class<TargetType> targetTypeClass) {
+        Linq<TargetType> linq = new Linq<>();
+        linq._list = Linq.ofType(this._list, targetTypeClass);
+        return linq;
+    }
+
+    public static <SourceType, TargetType>
+    List<TargetType> ofType(Iterable<SourceType> iterable, Class<TargetType> targetTypeClass) {
+        List<TargetType> list = new ArrayList<>();
+        for (var item : iterable) {
+            if (targetTypeClass.equals(item.getClass())) {
+                list.add((TargetType) item);
+            }
+        }
+        return list;
+    }
+
+    public static <SourceType, TargetType>
+    List<TargetType> ofType(Collection<SourceType> collection, Class<TargetType> targetTypeClass) {
+        List<TargetType> list = new ArrayList<>(collection.size());
+        for (var item : collection) {
+            if (targetTypeClass.equals(item.getClass())) {
+                list.add((TargetType) item);
+            }
+        }
+        return list;
+    }
+
+    public static <SourceType, TargetType>
+    List<TargetType> ofType(SourceType[] arr, Class<TargetType> targetTypeClass) {
+        return Linq.ofType(Arrays.asList(arr), targetTypeClass);
+    }
+
     public <ComparableType extends Comparable<ComparableType>>
     OrderedLinq<T> orderBy(IFunc<T, ComparableType> iFunc) {
         Sort.quickSort(this._list, iFunc);
