@@ -821,6 +821,112 @@ public class Linq<T> implements Iterable<T> {
         );
     }
 
+    public Linq<T> intersect(Iterable<T> iterable) {
+        this._list = Linq.intersect(this, iterable);
+        return this;
+    }
+
+    public Linq<T> intersect(Collection<T> collection) {
+        this._list = Linq.intersect(this._list, collection);
+        return this;
+    }
+
+    public Linq<T> intersect(T[] arr) {
+        return this.intersect(Arrays.asList(arr));
+    }
+
+    public static <T> List<T> intersect(Iterable<T> iterable1, Iterable<T> iterable2) {
+        Set<T> set = new HashSet<>();
+        for (var item : iterable2) {
+            set.add(item);
+        }
+        List<T> list = new ArrayList<>();
+        for (var item : iterable1) {
+            if (set.contains(item)) {
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> intersect(Collection<T> collection1, Collection<T> collection2) {
+        Set<T> set = new HashSet<>(collection2.size());
+        set.addAll(collection2);
+        List<T> list = new ArrayList<>(collection1.size());
+        for (var item : collection1) {
+            if (set.contains(item)) {
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> intersect(Iterable<T> iterable, T[] arr) {
+        return Linq.intersect(iterable, Arrays.asList(arr));
+    }
+
+    public static <T> List<T> intersect(T[] arr, Iterable<T> iterable) {
+        return Linq.intersect(Arrays.asList(arr), iterable);
+    }
+
+    public static <T> List<T> intersect(T[] arr1, T[] arr2) {
+        return Linq.intersect(Arrays.asList(arr1), Arrays.asList(arr2));
+    }
+
+    public Linq<T> intersect(Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        this._list = Linq.intersect(this, iterable, equalityComparator);
+        return this;
+    }
+
+    public Linq<T> intersect(Collection<T> collection, IEqualityComparator<T> equalityComparator) {
+        this._list = Linq.intersect(this._list, collection, equalityComparator);
+        return this;
+    }
+
+    public Linq<T> intersect(T[] arr, IEqualityComparator<T> equalityComparator) {
+        return this.intersect(Arrays.asList(arr), equalityComparator);
+    }
+
+    public static <T>
+    List<T> intersect(Iterable<T> iterable1, Iterable<T> iterable2, IEqualityComparator<T> equalityComparator) {
+        List<T> list = new ArrayList<>();
+        for (var item1 : iterable1) {
+            for (var item2 : iterable2) {
+                if (equalityComparator.equals(item1, item2)) {
+                    list.add(item1);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public static <T>
+    List<T> intersect(Collection<T> collection1, Collection<T> collection2, IEqualityComparator<T> equalityComparator) {
+        List<T> list = new ArrayList<>(collection1.size());
+        for (var item1 : collection1) {
+            for (var item2 : collection2) {
+                if (equalityComparator.equals(item1, item2)) {
+                    list.add(item1);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public static <T> List<T> intersect(Iterable<T> iterable, T[] arr, IEqualityComparator<T> equalityComparator) {
+        return Linq.intersect(iterable, Arrays.asList(arr), equalityComparator);
+    }
+
+    public static <T> List<T> intersect(T[] arr, Iterable<T> iterable, IEqualityComparator<T> equalityComparator) {
+        return Linq.intersect(Arrays.asList(arr), iterable, equalityComparator);
+    }
+
+    public static <T> List<T> intersect(T[] arr1, T[] arr2, IEqualityComparator<T> equalityComparator) {
+        return Linq.intersect(Arrays.asList(arr1), Arrays.asList(arr2), equalityComparator);
+    }
+
     public <InnerType, KeyType, ResultType> Linq<ResultType> join(
             Iterable<InnerType> inner,
             IFunc<T, KeyType> outerKeySelector,
