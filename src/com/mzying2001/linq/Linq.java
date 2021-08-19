@@ -1972,6 +1972,28 @@ public class Linq<T> implements Iterable<T> {
         return this;
     }
 
+    public Set<T> toSet() {
+        return Linq.toSet(this._list);
+    }
+
+    public static <T> Set<T> toSet(Iterable<T> iterable) {
+        Set<T> set = new HashSet<>();
+        for (var item : iterable) {
+            set.add(item);
+        }
+        return set;
+    }
+
+    public static <T> Set<T> toSet(Collection<T> collection) {
+        Set<T> set = new HashSet<>(collection.size());
+        set.addAll(collection);
+        return set;
+    }
+
+    public static <T> Set<T> toSet(T[] arr) {
+        return Linq.toSet(Arrays.asList(arr));
+    }
+
     public Linq<T> union(T[] arr) {
         return this.union(Arrays.asList(arr));
     }
