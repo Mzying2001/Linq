@@ -609,6 +609,83 @@ public class Linq<T> implements Iterable<T> {
         return Linq.groupBy(Arrays.asList(arr), getKeyFunc, keyEqualityComparator);
     }
 
+    public <InnerType, KeyType, ResultType> Linq<ResultType> join(
+            Iterable<InnerType> inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, InnerType, ResultType> resultSelector
+    ) {
+        Linq<ResultType> linq = new Linq<>();
+        linq._list = Linq.join(this, inner, outerKeySelector, innerKeySelector, resultSelector);
+        return linq;
+    }
+
+    public <InnerType, KeyType, ResultType> Linq<ResultType> join(
+            InnerType[] inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, InnerType, ResultType> resultSelector
+    ) {
+        return this.join(Arrays.asList(inner), outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            Iterable<OuterType> outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector
+    ) {
+        Map<KeyType, InnerType> map = new HashMap<>();
+        for (var item : inner) {
+            map.put(innerKeySelector.func(item), item);
+        }
+        List<ResultType> list = new ArrayList<>();
+        for (var item : outer) {
+            KeyType key = outerKeySelector.func(item);
+            if (map.containsKey(key)) {
+                list.add(resultSelector.func(item, map.get(key)));
+            }
+        }
+        return list;
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            OuterType[] outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector
+    ) {
+        return Linq.join(Arrays.asList(outer), inner, outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            Iterable<OuterType> outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector
+    ) {
+        return Linq.join(outer, Arrays.asList(inner), outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> join(
+            OuterType[] outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, InnerType, ResultType> resultSelector
+    ) {
+        return Linq.join(
+                Arrays.asList(outer),
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector
+        );
+    }
+
     public T last() {
         int index = this.count() - 1;
         if (index == -1) {
