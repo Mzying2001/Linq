@@ -609,6 +609,218 @@ public class Linq<T> implements Iterable<T> {
         return Linq.groupBy(Arrays.asList(arr), getKeyFunc, keyEqualityComparator);
     }
 
+    public <InnerType, KeyType, ResultType> Linq<ResultType> groupJoin(
+            Iterable<InnerType> inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, List<InnerType>, ResultType> resultSelector
+    ) {
+        Linq<ResultType> linq = new Linq<>();
+        linq._list = Linq.groupJoin(this, inner, outerKeySelector, innerKeySelector, resultSelector);
+        return linq;
+    }
+
+    public <InnerType, KeyType, ResultType> Linq<ResultType> groupJoin(
+            InnerType[] inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, List<InnerType>, ResultType> resultSelector
+    ) {
+        return this.groupJoin(Arrays.asList(inner), outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            Iterable<OuterType> outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector
+    ) {
+        Map<KeyType, List<InnerType>> map = new HashMap<>();
+        for (var innerItem : inner) {
+            KeyType key = innerKeySelector.func(innerItem);
+            if (map.containsKey(key)) {
+                map.get(key).add(innerItem);
+            } else {
+                List<InnerType> innerList = new ArrayList<>();
+                innerList.add(innerItem);
+                map.put(key, innerList);
+            }
+        }
+        List<ResultType> resultList = new ArrayList<>();
+        for (var outerItem : outer) {
+            KeyType key = outerKeySelector.func(outerItem);
+            resultList.add(resultSelector.func(outerItem, map.containsKey(key) ? map.get(key) : new ArrayList<>()));
+        }
+        return resultList;
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            Iterable<OuterType> outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector
+    ) {
+        return Linq.groupJoin(outer, Arrays.asList(inner), outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            OuterType[] outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector
+    ) {
+        return Linq.groupJoin(Arrays.asList(outer), inner, outerKeySelector, innerKeySelector, resultSelector);
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            OuterType[] outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector
+    ) {
+        return Linq.groupJoin(
+                Arrays.asList(outer),
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector
+        );
+    }
+
+    public <InnerType, KeyType, ResultType> Linq<ResultType> groupJoin(
+            Iterable<InnerType> inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        Linq<ResultType> linq = new Linq<>();
+        linq._list = Linq.groupJoin(
+                this,
+                inner,
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+        return linq;
+    }
+
+    public <InnerType, KeyType, ResultType> Linq<ResultType> groupJoin(
+            InnerType[] inner,
+            IFunc<T, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<T, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return this.groupJoin(
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            Iterable<OuterType> outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        List<Group<KeyType, InnerType>> innerList = new ArrayList<>();
+        for (var innerItem : inner) {
+            KeyType key = innerKeySelector.func(innerItem);
+            boolean flag = true;
+            for (var innerListItem : innerList) {
+                if (keyEqualityComparator.equals(key, innerListItem.getKey())) {
+                    innerListItem.add(innerItem);
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                innerList.add(new Group<>(key, innerItem));
+            }
+        }
+        List<ResultType> resultList = new ArrayList<>();
+        for (var outerItem : outer) {
+            KeyType key = outerKeySelector.func(outerItem);
+            boolean flag = true;
+            for (var innerListItem : innerList) {
+                if (keyEqualityComparator.equals(key, innerListItem.getKey())) {
+                    resultList.add(resultSelector.func(outerItem, innerListItem.getList()));
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                resultList.add(resultSelector.func(outerItem, new ArrayList<>()));
+            }
+        }
+        return resultList;
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            Iterable<OuterType> outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.groupJoin(
+                outer,
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            OuterType[] outer,
+            Iterable<InnerType> inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.groupJoin(
+                Arrays.asList(outer),
+                inner,
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
+    public static <OuterType, InnerType, KeyType, ResultType> List<ResultType> groupJoin(
+            OuterType[] outer,
+            InnerType[] inner,
+            IFunc<OuterType, KeyType> outerKeySelector,
+            IFunc<InnerType, KeyType> innerKeySelector,
+            IJoinFunc<OuterType, List<InnerType>, ResultType> resultSelector,
+            IEqualityComparator<KeyType> keyEqualityComparator
+    ) {
+        return Linq.groupJoin(
+                Arrays.asList(outer),
+                Arrays.asList(inner),
+                outerKeySelector,
+                innerKeySelector,
+                resultSelector,
+                keyEqualityComparator
+        );
+    }
+
     public <InnerType, KeyType, ResultType> Linq<ResultType> join(
             Iterable<InnerType> inner,
             IFunc<T, KeyType> outerKeySelector,
