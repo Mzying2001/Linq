@@ -75,4 +75,21 @@ public class Sort {
         if (list.size() > 1)
             quickSort(list, comparator, 0, list.size() - 1);
     }
+
+    public static <T> void insertSort(List<T> list, IComparator<T> comparator) {
+        int listSize = list.size();
+        if (listSize < 2)
+            return;
+        int insertIndex;
+        T insertValue, temp;
+        for (int i = 1; i < listSize; i++) {
+            insertIndex = i - 1;
+            insertValue = list.get(i);
+            while (insertIndex >= 0 && comparator.compare(temp = list.get(insertIndex), insertValue) > 0) {
+                list.set(insertIndex + 1, temp);
+                insertIndex--;
+            }
+            list.set(insertIndex + 1, insertValue);
+        }
+    }
 }
