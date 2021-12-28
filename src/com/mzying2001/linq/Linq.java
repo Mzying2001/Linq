@@ -73,6 +73,18 @@ public class Linq<T> implements Iterable<T> {
         return true;
     }
 
+    public boolean any() {
+        return _list.size() > 0;
+    }
+
+    public static <T> boolean any(Iterable<T> iterable) {
+        return iterable.iterator().hasNext();
+    }
+
+    public static <T> boolean any(T[] arr) {
+        return arr.length > 0;
+    }
+
     public boolean any(IFunc<T, Boolean> iFunc) {
         return Linq.any(this, iFunc);
     }
